@@ -180,3 +180,220 @@ DeletePage
 
 
 </h1>
+
+
+
+==============================================================================
+change
+==============================================================================
+
+DeletePage
+--------------------------------------
+<h1>
+    Delete a member :
+    <br />
+    <form action="/Login/Delete"> 
+        <table>
+            <tr>
+                <td>Enter Name: </td>
+                <td><input type="text" name="name" /></td>
+            </tr>
+            <tr>
+                <td>Enter Login Id: </td>
+                <td><input type="text" name="uname" /></td>
+            </tr>
+            <tr>
+                <td>Enter Password: </td>
+                <td><input type="text" name="passwd" /></td>
+            </tr>
+
+            <tr>
+                <td rowspan="2"><input type="submit" value="Delete " /></td>
+            </tr>
+        </table>
+
+   </form> 
+
+
+------------------------------------------------------
+Authentication function in crud
+---------------------------------------------------
+ public static Boolean Authentication(string uname)
+ {
+     try
+     {
+         SqlConnection con = new SqlConnection(@"Data Source=DESKTOP-O7LF2JA;Initial Catalog=training;Integrated Security=True");
+         con.Open();
+         ///Select : Read R of CRUD
+         SqlCommand cmd = new SqlCommand($"Select * from LoginTbl", con);
+
+         cmd.CommandType = CommandType.Text;
+         SqlDataReader rdr = cmd.ExecuteReader();
+       
+         while (rdr.Read())
+         {
+             if(rdr.GetString(1) == "admin")
+             {
+                 return true;
+             }
+             return false;
+         }
+
+         return false;
+     }
+     catch (Exception e)
+     {
+         Console.WriteLine(e.ToString());
+         return false;
+     }
+ }
+
+
+</h1>
+
+
+----------------------------------------------
+LoginController.cs
+--------------------------------------------
+
+//using Microsoft.AspNetCore.Mvc;
+//using System.Xml.Linq;
+
+//namespace Day29MVC.Controllers
+//{
+//    public class LoginController : Controller
+//    {
+//        public IActionResult Index()
+//        {
+//            return View();
+//        }
+//        public IActionResult mySite(string uname, string pass)
+//        {
+//            if(CRUD_ADO.CRUD.chkValidity(uname,pass))
+//            {
+//                return RedirectToAction("Success");
+//            }
+//            return RedirectToAction("Failure");
+//        }
+//        public IActionResult Success()
+//        {
+//            return View();
+//        }
+//        public IActionResult Failure()
+//        {
+//            return View();
+//        }
+//        public IActionResult Register() 
+//        {
+//            return View();
+//        }
+
+//        public IActionResult Update()
+//        {
+//            return View();
+//        }
+
+//        public IActionResult Updated(string name, string oldpass, string newpass, string conpass)
+//        {
+//            if (CRUD_ADO.CRUD.updatePass(name, oldpass, newpass, conpass))
+//            {
+//                return RedirectToAction("Success");
+//            }
+//            return RedirectToAction("Failure");
+//        }
+
+//        public IActionResult Registration(string name, string uname, string pass)
+//        {
+//            if (CRUD_ADO.CRUD.Insert(name, uname, pass))
+//                ViewData["EmpName"] = name;
+//                return View();
+//        }
+
+//        public IActionResult admincheck(string name)
+//        {
+//            if (name == "admin")
+//                return RedirectToAction("admin");
+//            return RedirectToAction("Index");
+//        }
+
+//        public IActionResult admin()
+//        { 
+//            return View();
+//        }
+
+//        public IActionResult details()
+//        {
+//            return View();
+//        }
+
+
+//        public IActionResult Delete(string name, string uname, string pass)
+//        {
+
+//            if (CRUD_ADO.CRUD.delete(name, uname, pass))
+//            {
+//                return RedirectToAction("Success");
+//            }
+//            return RedirectToAction("Failure");
+//        }
+
+//    }
+//}
+
+
+
+using Microsoft.AspNetCore.Mvc;
+using System.Data.SqlClient;
+using System.Data;
+using System;
+using System.Xml.Linq;
+
+namespace Day29MVC.Controllers
+{
+    public class LoginController : Controller
+    {
+        public IActionResult Index()
+        {
+            return View();
+        }
+        public IActionResult Authentication(string uname)
+        {
+            if (CRUD_ADO.CRUD.Authentication(uname))
+            {
+                return RedirectToAction("DeletePage");
+            }
+            return RedirectToAction("Index");
+
+        }
+        public IActionResult DeletePage()
+        {
+           
+           return View();
+
+        }
+        public IActionResult Delete(string name, string uname, string passwd)
+        {
+            if (CRUD_ADO.CRUD.DeletePage(name, uname, passwd))
+            {
+                return RedirectToAction("Success");
+            }
+            else
+            {
+                return RedirectToAction("Failure");
+            }
+        }
+
+
+
+        public IActionResult Success()
+        {
+            return View();
+        }
+        public IActionResult Failure()
+        {
+            return View();
+        }
+    }
+}
+
+
